@@ -42,7 +42,7 @@ elif [ `uname` = 'Darwin' ] ; then
   GO_URL=https://go.googlecode.com/files/go${GO_VERSION}.darwin-amd64-osx10.8.tar.gz
 fi
 
-HADOOP_VERSION=2.2.0
+HADOOP_VERSION=2.3.0
 HADOOP_URL=$APACHE_MIRROR_URL/hadoop/core/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
 
 HBASE_VERSION=0.96.1
@@ -117,6 +117,18 @@ function bootstrap() {
   fi
 }
 
+function bootstrap_cassandra() {
+  bootstrap cassandra apache-cassandra $CASSANDRA_URL
+
+  mkdir -p cassandra/data
+  cd cassandra/data
+  cassandra_data_dir=`pwd`
+  cd ../..
+
+  sed $SED_OPTS "s#/var/#$cassandra_data_dir/var/#g" cassandra/conf/*.*
+  sed $SED_OPTS "s#-Xss180k#-Xss228k#g" cassandra/conf/*.*
+}
+
 function bootstrap_emr_cli() {
   URL=$1
 
@@ -127,6 +139,103 @@ function bootstrap_emr_cli() {
   unzip_download $URL
 
   cd ..
+}
+
+function bootstrap_hadoop() {
+  bootstrap hadoop hadoop- $HADOOP_URL
+
+  mkdir -p hadoop/data
+  cd hadoop/data
+  hadoop_data_dir=`pwd`
+  cd ../..
+  hadoop_conf_dir=hadoop/etc/hadoop
+
+  if [ `uname` = 'Linux' ] ; then
+    num_cores=`cat /proc/cpuinfo | grep processor | wc -l`
+  elif [ `uname` = 'Darwin' ] ; then
+    num_cores=`sysctl -n hw.ncpu`
+  fi
+
+  primary_group=`id -g -n $USER`
+
+  sed $SED_OPTS "s#\(JAVA_HOME\).*#\1=$JAVA_HOME#g" $hadoop_conf_dir/hadoop-env.sh
+  sed $SED_OPTS "s/# export JAVA_HOME/export JAVA_HOME/g" $hadoop_conf_dir/hadoop-env.sh
+  echo "export HADOOP_HOME_WARN_SUPPRESS=TRUE" >> $hadoop_conf_dir/hadoop-env.sh
+
+  mv $hadoop_conf_dir/core-site.xml $hadoop_conf_dir/core-site.xml.orig
+  cat > $hadoop_conf_dir/core-site.xml <<XML_DOC
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <property>
+    <name>fs.checkpoint.dir</name>
+    <value>$hadoop_data_dir/dfs/namesecondary</value>
+  </property>
+  <property>
+    <name>fs.default.name</name>
+    <value>hdfs://localhost:8020</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.$USER.hosts</name>
+    <value>localhost</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.$USER.groups</name>
+    <value>$primary_group</value>
+  </property>
+</configuration>
+XML_DOC
+
+  mv $hadoop_conf_dir/hdfs-site.xml $hadoop_conf_dir/hdfs-site.xml.orig
+  cat > $hadoop_conf_dir/hdfs-site.xml <<XML_DOC
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <property>
+    <name>dfs.name.dir</name>
+    <value>$hadoop_data_dir/dfs/name</value>
+  </property>
+  <property>
+    <name>dfs.data.dir</name>
+    <value>$hadoop_data_dir/dfs/data</value>
+  </property>
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>dfs.support.append</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.datanode.max.xcievers</name>
+    <value>4096</value>
+  </property>
+</configuration>
+XML_DOC
+
+  cat > $hadoop_conf_dir/mapred-site.xml <<XML_DOC
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <property>
+    <name>mapred.local.dir</name>
+    <value>$hadoop_data_dir/mapred/local</value>
+  </property>
+  <property>
+    <name>mapred.job.tracker</name>
+    <value>localhost:8021</value>
+  </property>
+  <property>
+    <name>mapred.tasktracker.map.tasks.maximum</name>
+    <value>$num_cores</value>
+    <final>true</final>
+  </property>
+</configuration>
+XML_DOC
 }
 
 function bootstrap_jdk() {
@@ -202,7 +311,7 @@ for download in "$@" ; do
   if [ "$download" = "ant" ] ; then
     bootstrap ant apache-ant $ANT_URL
   elif [ "$download" = "cassandra" ] ; then
-    bootstrap cassandra apache-cassandra $CASSANDRA_URL
+    bootstrap_cassandra
   elif [ "$download" = "clojure" ] ; then
     bootstrap clojure clojure $CLOJURE_URL
   elif [ "$download" = "ec2-api-tools" ] ; then
@@ -214,7 +323,7 @@ for download in "$@" ; do
   elif [ "$download" = "go" ] ; then
     bootstrap "" go $GO_URL
   elif [ "$download" = "hadoop" ] ; then
-    bootstrap hadoop hadoop- $HADOOP_URL
+    bootstrap_hadoop
   elif [ "$download" = "hbase" ] ; then
     bootstrap hbase hbase- $HBASE_URL
   elif [ "$download" = "hive" ] ; then
