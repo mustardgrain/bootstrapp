@@ -7,7 +7,7 @@ elif [ `uname` = 'Darwin' ] ; then
 fi
 
 AMAZON_MIRROR_URL=http://s3.amazonaws.com
-APACHE_MIRROR_URL=http://mirror.cc.columbia.edu/pub/software/apache
+APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
 ECLIPSE_MIRROR_URL=http://ftp.ussg.iu.edu
 
 ANT_VERSION=1.9.3
