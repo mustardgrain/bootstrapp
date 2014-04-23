@@ -241,7 +241,7 @@ XML_DOC
 function bootstrap_jdk() {
   rm -rf jdk
   rm -rf jdk1.${JDK_MAJOR_VERSION}*
-  wget -q --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $JDK_URL
+  wget -q --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" $JDK_URL
   tar xzf $JDK_FILE
   rm -rf $JDK_FILE
   ln -s jdk1.${JDK_MAJOR_VERSION}.0_${JDK_MINOR_VERSION} jdk
