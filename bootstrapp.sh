@@ -63,6 +63,14 @@ KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.8.0-$KAFKA_VERSION.tar
 MAVEN_VERSION=3.1.1
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
+MONGO_VERSION=2.4.10
+
+if [ `uname` = 'Linux' ] ; then
+  MONGO_URL=http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz
+elif [ `uname` = 'Darwin' ] ; then
+  MONGO_URL=http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-$MONGO_VERSION.tgz
+fi
+
 RDS_CLI_VERSION="(latest)"
 RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
 
@@ -295,6 +303,7 @@ function usage() {
 
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
+  echo "  mongo             $(printf %${WIDTH}s $MONGO_VERSION) $MONGO_URL"
   echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
   echo "  solr              $(printf %${WIDTH}s $SOLR_VERSION) $SOLR_URL"
   echo "  redis             $(printf %${WIDTH}s $REDIS_VERSION) $REDIS_URL"
@@ -334,6 +343,8 @@ for download in "$@" ; do
     bootstrap kafka kafka $KAFKA_URL
   elif [ "$download" = "maven" ] ; then
     bootstrap_maven
+  elif [ "$download" = "mongo" ] ; then
+    bootstrap mongo mongo $MONGO_URL
   elif [ "$download" = "rds-cli" ] ; then
     bootstrap rds-cli RDSCli- $RDS_CLI_URL
   elif [ "$download" = "redis" ] ; then
