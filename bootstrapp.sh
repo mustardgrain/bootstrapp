@@ -10,7 +10,7 @@ AMAZON_MIRROR_URL=http://s3.amazonaws.com
 APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
 ECLIPSE_MIRROR_URL=http://ftp.ussg.iu.edu
 
-ANT_VERSION=1.9.3
+ANT_VERSION=1.9.4
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 CASSANDRA_VERSION=2.0.5
@@ -50,12 +50,6 @@ HBASE_URL=$APACHE_MIRROR_URL/hbase/hbase-$HBASE_VERSION/hbase-$HBASE_VERSION-had
 
 HIVE_VERSION=0.11.0
 HIVE_URL=$APACHE_MIRROR_URL/hive/hive-$HIVE_VERSION/hive-$HIVE_VERSION-bin.tar.gz
-
-JDK_MAJOR_VERSION=7
-JDK_MINOR_VERSION=55
-JDK_VERSION=${JDK_MAJOR_VERSION}u${JDK_MINOR_VERSION}
-JDK_FILE="jdk-${JDK_VERSION}-linux-x64.tar.gz"
-JDK_URL="http://download.oracle.com/otn-pub/java/jdk/${JDK_VERSION}-b13/$JDK_FILE"
 
 KAFKA_VERSION=0.8.0
 KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.8.0-$KAFKA_VERSION.tar.gz
@@ -246,15 +240,6 @@ XML_DOC
 XML_DOC
 }
 
-function bootstrap_jdk() {
-  rm -rf jdk
-  rm -rf jdk1.${JDK_MAJOR_VERSION}*
-  wget -q --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" $JDK_URL
-  tar xzf $JDK_FILE
-  rm -rf $JDK_FILE
-  ln -s jdk1.${JDK_MAJOR_VERSION}.0_${JDK_MINOR_VERSION} jdk
-}
-
 function bootstrap_maven() {
   bootstrap maven apache-maven $MAVEN_URL
 
@@ -296,11 +281,6 @@ function usage() {
   echo "  hadoop            $(printf %${WIDTH}s $HADOOP_VERSION) $HADOOP_URL"
   echo "  hbase             $(printf %${WIDTH}s $HBASE_VERSION) $HBASE_URL"
   echo "  hive              $(printf %${WIDTH}s $HIVE_VERSION) $HIVE_URL"
-
-  if [ `uname` = "Linux" ] ; then
-  echo "  jdk               $(printf %${WIDTH}s $JDK_VERSION) $JDK_URL"
-  fi
-
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mongo             $(printf %${WIDTH}s $MONGO_VERSION) $MONGO_URL"
@@ -337,8 +317,6 @@ for download in "$@" ; do
     bootstrap hbase hbase- $HBASE_URL
   elif [ "$download" = "hive" ] ; then
     bootstrap hive hive- $HIVE_URL
-  elif [ "$download" = "jdk" -a `uname` = "Linux" ] ; then
-    bootstrap_jdk
   elif [ "$download" = "kafka" ] ; then
     bootstrap kafka kafka $KAFKA_URL
   elif [ "$download" = "maven" ] ; then
