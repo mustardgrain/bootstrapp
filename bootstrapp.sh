@@ -37,9 +37,9 @@ EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 GO_VERSION=1.3
 
 if [ `uname` = 'Linux' ] ; then
-  GO_URL=https://go.googlecode.com/files/go${GO_VERSION}.linux-amd64.tar.gz
+  GO_URL=http://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz
 elif [ `uname` = 'Darwin' ] ; then
-  GO_URL=https://go.googlecode.com/files/go${GO_VERSION}.darwin-amd64-osx10.8.tar.gz
+  GO_URL=http://golang.org/dl/go${GO_VERSION}.darwin-amd64-osx10.8.tar.gz
 fi
 
 HADOOP_VERSION=2.3.0
