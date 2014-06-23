@@ -34,7 +34,7 @@ fi
 EMR_CLI_VERSION="(latest)"
 EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 
-GO_VERSION=1.2.1
+GO_VERSION=1.3
 
 if [ `uname` = 'Linux' ] ; then
   GO_URL=https://go.googlecode.com/files/go${GO_VERSION}.linux-amd64.tar.gz
