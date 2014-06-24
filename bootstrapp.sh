@@ -31,6 +31,9 @@ elif [ `uname` = 'Darwin' ] ; then
   ECLIPSE_URL=$_ECLIPSE_MIRROR/eclipse-java-$ECLIPSE_VERSION-$_ECLIPSE_REVISION-macosx-cocoa-x86_64.tar.gz
 fi
 
+ELASTICSEARCH_VERSION=1.2.1
+ELASTICSEARCH_URL=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ELASTICSEARCH_VERSION.zip
+
 EMR_CLI_VERSION="(latest)"
 EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 
@@ -276,6 +279,7 @@ function usage() {
   echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
   echo "  ec2-api-tools     $(printf %${WIDTH}s $EC2_API_TOOLS_VERSION) $EC2_API_TOOLS_URL"
   echo "  eclipse           $(printf %${WIDTH}s $ECLIPSE_VERSION) $ECLIPSE_URL"
+  echo "  elasticsearch     $(printf %${WIDTH}s $ELASTICSEARCH_VERSION) $ELASTICSEARCH_URL"
   echo "  emr-cli           $(printf %${WIDTH}s $EMR_CLI_VERSION) $EMR_CLI_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  hadoop            $(printf %${WIDTH}s $HADOOP_VERSION) $HADOOP_URL"
@@ -307,6 +311,8 @@ for download in "$@" ; do
     bootstrap ec2-api-tools ec2-api-tools- $EC2_API_TOOLS_URL
   elif [ "$download" = "eclipse" ] ; then
     bootstrap "" eclipse $ECLIPSE_URL
+  elif [ "$download" = "elasticsearch" ] ; then
+    bootstrap elasticsearch elasticsearch $ELASTICSEARCH_URL
   elif [ "$download" = "emr-cli" ] ; then
     bootstrap_emr_cli $EMR_CLI_URL
   elif [ "$download" = "go" ] ; then
