@@ -46,8 +46,8 @@ RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
 REDIS_VERSION=2.8.13
 REDIS_URL=http://download.redis.io/releases/redis-$REDIS_VERSION.tar.gz
 
-SOLR_VERSION=4.9.0
-SOLR_URL=$APACHE_MIRROR_URL/lucene/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz
+SPARK_VERSION=1.0.2
+SPARK_URL=$APACHE_MIRROR_URL/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.tgz
 
 function untar_download() {
   /usr/bin/curl -L -s $1 | tar xz
@@ -141,7 +141,7 @@ function usage() {
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mongo             $(printf %${WIDTH}s $MONGO_VERSION) $MONGO_URL"
   echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
-  echo "  solr              $(printf %${WIDTH}s $SOLR_VERSION) $SOLR_URL"
+  echo "  spark             $(printf %${WIDTH}s $SPARK_VERSION) $SPARK_URL"
   echo "  redis             $(printf %${WIDTH}s $REDIS_VERSION) $REDIS_URL"
 
   exit 1
@@ -172,8 +172,8 @@ for download in "$@" ; do
     bootstrap mongo mongo $MONGO_URL
   elif [ "$download" = "rds-cli" ] ; then
     bootstrap rds-cli RDSCli- $RDS_CLI_URL
-  elif [ "$download" = "solr" ] ; then
-    bootstrap solr solr $SOLR_URL
+  elif [ "$download" = "spark" ] ; then
+    bootstrap spark spark $SPARK_URL
   elif [ "$download" = "redis" ] ; then
     bootstrap_redis
   else
