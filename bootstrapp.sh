@@ -46,6 +46,9 @@ RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
 REDIS_VERSION=2.8.13
 REDIS_URL=http://download.redis.io/releases/redis-$REDIS_VERSION.tar.gz
 
+SCALA_VERSION=2.10.4
+SCALA_URL=http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz
+
 SPARK_VERSION=1.0.2
 SPARK_URL=$APACHE_MIRROR_URL/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.tgz
 
@@ -141,8 +144,9 @@ function usage() {
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mongo             $(printf %${WIDTH}s $MONGO_VERSION) $MONGO_URL"
   echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
-  echo "  spark             $(printf %${WIDTH}s $SPARK_VERSION) $SPARK_URL"
   echo "  redis             $(printf %${WIDTH}s $REDIS_VERSION) $REDIS_URL"
+  echo "  scala             $(printf %${WIDTH}s $SCALA_VERSION) $SCALA_URL"
+  echo "  spark             $(printf %${WIDTH}s $SPARK_VERSION) $SPARK_URL"
 
   exit 1
 }
@@ -172,10 +176,12 @@ for download in "$@" ; do
     bootstrap mongo mongo $MONGO_URL
   elif [ "$download" = "rds-cli" ] ; then
     bootstrap rds-cli RDSCli- $RDS_CLI_URL
-  elif [ "$download" = "spark" ] ; then
-    bootstrap spark spark $SPARK_URL
   elif [ "$download" = "redis" ] ; then
     bootstrap_redis
+  elif [ "$download" = "scala" ] ; then
+    bootstrap scala scala $SCALA_URL
+  elif [ "$download" = "spark" ] ; then
+    bootstrap spark spark $SPARK_URL
   else
     usage
   fi
