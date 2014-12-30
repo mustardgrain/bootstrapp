@@ -12,13 +12,13 @@ CASSANDRA_URL=$APACHE_MIRROR_URL/cassandra/$CASSANDRA_VERSION/apache-cassandra-$
 EC2_API_TOOLS_VERSION="(latest)"
 EC2_API_TOOLS_URL=$AMAZON_MIRROR_URL/ec2-downloads/ec2-api-tools.zip
 
-ELASTICSEARCH_VERSION=1.3.2
+ELASTICSEARCH_VERSION=1.4.2
 ELASTICSEARCH_URL=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ELASTICSEARCH_VERSION.zip
 
 EMR_CLI_VERSION="(latest)"
 EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 
-GO_VERSION=1.3.1
+GO_VERSION=1.4
 
 if [ `uname` = 'Linux' ] ; then
   GO_URL=http://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz
@@ -43,14 +43,14 @@ fi
 RDS_CLI_VERSION="(latest)"
 RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
 
-REDIS_VERSION=2.8.13
+REDIS_VERSION=2.8.19
 REDIS_URL=http://download.redis.io/releases/redis-$REDIS_VERSION.tar.gz
 
 SCALA_VERSION=2.10.4
 SCALA_URL=http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz
 
-SPARK_VERSION=1.0.2
-SPARK_URL=$APACHE_MIRROR_URL/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.tgz
+SPARK_VERSION=1.2.0
+SPARK_URL=$APACHE_MIRROR_URL/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.4.tgz
 
 function untar_download() {
   /usr/bin/curl -L -s $1 | tar xz
