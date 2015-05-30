@@ -26,11 +26,17 @@ LIQUIBASE_URL=http://downloads.sourceforge.net/project/liquibase/Liquibase%20Cor
 MAVEN_VERSION=3.2.5
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
+MYSQL_JAR_VERSION=5.1.35
+MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
+
 PLAY_VERSION=2.2.3
 PLAY_URL=http://downloads.typesafe.com/play/$PLAY_VERSION/play-$PLAY_VERSION.zip
 
 RDS_CLI_VERSION="(latest)"
 RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
+
+SBT_VERSION=0.13.8
+SBT_URL=https://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz
 
 SCALA_VERSION=2.10.3
 SCALA_URL=http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz
@@ -44,6 +50,10 @@ function unzip_download() {
   /usr/bin/curl -L -s $1 > $TMP_FILE
   unzip -q $TMP_FILE
   rm -f $TMP_FILE
+}
+
+function download() {
+  /usr/bin/curl -L -s $1 > `basename $1`
 }
 
 function bootstrap() {
@@ -61,15 +71,19 @@ function bootstrap() {
     unlink $SHORT_NAME 2> /dev/null
   fi
 
-  rm -rf $LONG_NAME*
+  if [ "$LONG_NAME" != "" ] ; then
+    rm -rf $LONG_NAME*
+  fi
 
   if [ "$ARCHIVE_TYPE" = "zip" ] ; then
     unzip_download $URL
-  else
+  elif [ "$ARCHIVE_TYPE" = "tgz" -o "$ARCHIVE_TYPE" = ".gz" ] ; then
     untar_download $URL
+  else
+    download $URL
   fi
 
-  if [ "$SHORT_NAME" != "" ] ; then
+  if [ "$LONG_NAME" != "" -a "$SHORT_NAME" != "" ] ; then
     ln -s $LONG_NAME* $SHORT_NAME
   fi
 }
@@ -106,8 +120,10 @@ function usage() {
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  liquibase         $(printf %${WIDTH}s $LIQUIBASE_VERSION) $LIQUIBASE_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
+  echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
   echo "  play              $(printf %${WIDTH}s $PLAY_VERSION) $PLAY_URL"
   echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
+  echo "  sbt               $(printf %${WIDTH}s $SBT_VERSION) $SBT_URL"
   echo "  scala             $(printf %${WIDTH}s $SCALA_VERSION) $SCALA_URL"
 
   exit 1
@@ -130,12 +146,16 @@ for download in "$@" ; do
     bootstrap_liquibase
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
+  elif [ "$download" = "mysql-jar" ] ; then
+    bootstrap "" "" $MYSQL_JAR_URL
   elif [ "$download" = "play" ] ; then
     bootstrap play play $PLAY_URL
   elif [ "$download" = "rds-cli" ] ; then
     bootstrap rds-cli RDSCli- $RDS_CLI_URL
   elif [ "$download" = "scala" ] ; then
     bootstrap scala scala $SCALA_URL
+  elif [ "$download" = "sbt" ] ; then
+    bootstrap "" sbt $SBT_URL
   else
     usage
   fi
