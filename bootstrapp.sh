@@ -3,7 +3,7 @@
 AMAZON_MIRROR_URL=http://s3.amazonaws.com
 APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
 
-ANT_VERSION=1.9.4
+ANT_VERSION=1.9.5
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 EC2_API_TOOLS_VERSION="(latest)"
