@@ -21,7 +21,7 @@ elif [ `uname` = 'Darwin' ] ; then
 fi
 
 LIQUIBASE_VERSION=3.2.3
-LIQUIBASE_URL=http://downloads.sourceforge.net/project/liquibase/Liquibase%20Core/liquibase-$LIQUIBASE_VERSION-bin.zip
+LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-$LIQUIBASE_VERSION/liquibase-$LIQUIBASE_VERSION-bin.zip
 
 MAVEN_VERSION=3.2.5
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
