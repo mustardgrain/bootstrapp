@@ -128,8 +128,12 @@ function usage() {
   echo "  Bootstrapp option $(printf %${WIDTH}s "Version") URL"
   echo "  ----------------- $(printf %${WIDTH}s "-------") ---"
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
+
+  if [ `uname` = 'Linux' ] ; then
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
   echo "  docker-machine    $(printf %${WIDTH}s $DOCKER_MACHINE_VERSION) $DOCKER_MACHINE_URL"
+  fi
+
   echo "  emr-cli           $(printf %${WIDTH}s $EMR_CLI_VERSION) $EMR_CLI_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  liquibase         $(printf %${WIDTH}s $LIQUIBASE_VERSION) $LIQUIBASE_URL"
