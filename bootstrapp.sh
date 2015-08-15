@@ -6,6 +6,12 @@ APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
 ANT_VERSION=1.9.5
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
+DOCKER_COMPOSE_VERSION=1.4.0
+DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
+
+DOCKER_MACHINE_VERSION=0.4.0
+DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine_linux-amd64
+
 EC2_API_TOOLS_VERSION="(latest)"
 EC2_API_TOOLS_URL=$AMAZON_MIRROR_URL/ec2-downloads/ec2-api-tools.zip
 
@@ -88,6 +94,13 @@ function bootstrap() {
   fi
 }
 
+function bootstrap_docker_util() {
+  rm -rf $1
+  download $2
+  mv `basename $2` $1
+  chmod +x $1
+}
+
 function bootstrap_emr_cli() {
   rm -rf emr-cli
   mkdir emr-cli
@@ -115,7 +128,8 @@ function usage() {
   echo "  Bootstrapp option $(printf %${WIDTH}s "Version") URL"
   echo "  ----------------- $(printf %${WIDTH}s "-------") ---"
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
-  echo "  ec2-api-tools     $(printf %${WIDTH}s $EC2_API_TOOLS_VERSION) $EC2_API_TOOLS_URL"
+  echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
+  echo "  docker-machine    $(printf %${WIDTH}s $DOCKER_MACHINE_VERSION) $DOCKER_MACHINE_URL"
   echo "  emr-cli           $(printf %${WIDTH}s $EMR_CLI_VERSION) $EMR_CLI_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  liquibase         $(printf %${WIDTH}s $LIQUIBASE_VERSION) $LIQUIBASE_URL"
@@ -136,6 +150,10 @@ fi
 for download in "$@" ; do
   if [ "$download" = "ant" ] ; then
     bootstrap ant apache-ant $ANT_URL
+  elif [ "$download" = "docker-compose" ] ; then
+    bootstrap_docker_util docker-compose $DOCKER_COMPOSE_URL
+  elif [ "$download" = "docker-machine" ] ; then
+    bootstrap_docker_util docker-machine $DOCKER_MACHINE_URL
   elif [ "$download" = "ec2-api-tools" ] ; then
     bootstrap ec2-api-tools ec2-api-tools- $EC2_API_TOOLS_URL
   elif [ "$download" = "emr-cli" ] ; then
