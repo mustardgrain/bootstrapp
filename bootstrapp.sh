@@ -35,6 +35,9 @@ MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-
 MYSQL_JAR_VERSION=5.1.35
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
+NODEJS_VERSION=4.1.2
+NODEJS_URL=https://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-`echo $(uname) | tr '[:upper:]' '[:lower:]'`-x64.tar.gz
+
 PLAY_VERSION=2.2.3
 PLAY_URL=http://downloads.typesafe.com/play/$PLAY_VERSION/play-$PLAY_VERSION.zip
 
@@ -139,6 +142,7 @@ function usage() {
   echo "  liquibase         $(printf %${WIDTH}s $LIQUIBASE_VERSION) $LIQUIBASE_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
+  echo "  nodejs            $(printf %${WIDTH}s $NODEJS_VERSION) $NODEJS_URL"
   echo "  play              $(printf %${WIDTH}s $PLAY_VERSION) $PLAY_URL"
   echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
   echo "  sbt               $(printf %${WIDTH}s $SBT_VERSION) $SBT_URL"
@@ -170,6 +174,8 @@ for download in "$@" ; do
     bootstrap maven apache-maven $MAVEN_URL
   elif [ "$download" = "mysql-jar" ] ; then
     bootstrap "" "" $MYSQL_JAR_URL
+  elif [ "$download" = "nodejs" ] ; then
+    bootstrap "node" "node-" $NODEJS_URL
   elif [ "$download" = "play" ] ; then
     bootstrap play play $PLAY_URL
   elif [ "$download" = "rds-cli" ] ; then
