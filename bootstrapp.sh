@@ -35,7 +35,7 @@ MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-
 MYSQL_JAR_VERSION=5.1.35
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
-NODEJS_VERSION=4.1.2
+NODEJS_VERSION=0.10.40
 NODEJS_URL=https://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-`echo $(uname) | tr '[:upper:]' '[:lower:]'`-x64.tar.gz
 
 PLAY_VERSION=2.2.3
