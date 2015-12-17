@@ -18,7 +18,7 @@ EC2_API_TOOLS_URL=$AMAZON_MIRROR_URL/ec2-downloads/ec2-api-tools.zip
 EMR_CLI_VERSION="(latest)"
 EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 
-GO_VERSION=1.4.1
+GO_VERSION=1.5.2
 
 if [ `uname` = 'Linux' ] ; then
   GO_URL=http://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz
