@@ -1,5 +1,6 @@
 #!/bin/bash
 
+LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=http://s3.amazonaws.com
 APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
 
@@ -19,12 +20,7 @@ EMR_CLI_VERSION="(latest)"
 EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 
 GO_VERSION=1.5.2
-
-if [ `uname` = 'Linux' ] ; then
-  GO_URL=http://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz
-elif [ `uname` = 'Darwin' ] ; then
-  GO_URL=http://golang.org/dl/go${GO_VERSION}.darwin-amd64-osx10.8.tar.gz
-fi
+GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 LIQUIBASE_VERSION=3.2.3
 LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-$LIQUIBASE_VERSION/liquibase-$LIQUIBASE_VERSION-bin.zip
@@ -36,7 +32,7 @@ MYSQL_JAR_VERSION=5.1.35
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
 NODEJS_VERSION=0.10.40
-NODEJS_URL=https://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-`echo $(uname) | tr '[:upper:]' '[:lower:]'`-x64.tar.gz
+NODEJS_URL=https://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-${LOWER_UNAME}-x64.tar.gz
 
 PLAY_VERSION=2.2.3
 PLAY_URL=http://downloads.typesafe.com/play/$PLAY_VERSION/play-$PLAY_VERSION.zip
