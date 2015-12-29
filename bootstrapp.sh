@@ -40,6 +40,9 @@ PLAY_URL=http://downloads.typesafe.com/play/$PLAY_VERSION/play-$PLAY_VERSION.zip
 RDS_CLI_VERSION="(latest)"
 RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
 
+RUST_VERSION="(latest)"
+RUST_URL=https://static.rust-lang.org/rustup.sh
+
 SBT_VERSION=0.13.8
 SBT_URL=https://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz
 
@@ -120,6 +123,16 @@ function bootstrap_liquibase() {
   cd ..
 }
 
+function bootstrap_rust() {
+  RUSTUP_ARGS="--prefix=`pwd`/rust --yes --verbose --disable-sudo"
+  download $RUST_URL
+
+  sh rustup.sh $RUSTUP_ARGS --uninstall
+  rm -rf rust
+  sh rustup.sh $RUSTUP_ARGS
+  rm -f rustup.sh
+}
+
 function usage() {
   WIDTH=20
   echo "$0 <bootstrapp option> [<bootstrapp option>...]"
@@ -141,6 +154,7 @@ function usage() {
   echo "  nodejs            $(printf %${WIDTH}s $NODEJS_VERSION) $NODEJS_URL"
   echo "  play              $(printf %${WIDTH}s $PLAY_VERSION) $PLAY_URL"
   echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
+  echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
   echo "  sbt               $(printf %${WIDTH}s $SBT_VERSION) $SBT_URL"
   echo "  scala             $(printf %${WIDTH}s $SCALA_VERSION) $SCALA_URL"
 
@@ -176,6 +190,8 @@ for download in "$@" ; do
     bootstrap play play $PLAY_URL
   elif [ "$download" = "rds-cli" ] ; then
     bootstrap rds-cli RDSCli- $RDS_CLI_URL
+  elif [ "$download" = "rust" ] ; then
+    bootstrap_rust
   elif [ "$download" = "scala" ] ; then
     bootstrap scala scala $SCALA_URL
   elif [ "$download" = "sbt" ] ; then
