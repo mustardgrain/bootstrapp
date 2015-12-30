@@ -124,7 +124,7 @@ function bootstrap_liquibase() {
 }
 
 function bootstrap_rust() {
-  RUSTUP_ARGS="--prefix=`pwd`/rust --yes --verbose --disable-sudo"
+  RUSTUP_ARGS="--prefix=`pwd`/rust --yes --disable-sudo"
   download $RUST_URL
 
   sh rustup.sh $RUSTUP_ARGS --uninstall
