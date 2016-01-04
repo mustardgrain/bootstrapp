@@ -1,11 +1,14 @@
 #!/bin/bash
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
-AMAZON_MIRROR_URL=http://s3.amazonaws.com
+AMAZON_MIRROR_URL=https://s3.amazonaws.com
 APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
 
 ANT_VERSION=1.9.5
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
+
+AWS_CLI_VERSION=latest
+AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
 DOCKER_COMPOSE_VERSION=1.5.2
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
@@ -96,6 +99,15 @@ function bootstrap() {
   fi
 }
 
+function bootstrap_aws_cli() {
+  rm -rf aws aws-cli awscli-bundle
+  INSTALL_ARGS="--install-dir=`pwd`/aws-cli --bin-location=`pwd`/aws"
+  unzip_download $AWS_CLI_URL
+
+  ./awscli-bundle/install $INSTALL_ARGS
+  rm -rf awscli-bundle*
+}
+
 function bootstrap_docker_util() {
   rm -rf $1
   download $2
@@ -140,6 +152,7 @@ function usage() {
   echo "  Bootstrapp option $(printf %${WIDTH}s "Version") URL"
   echo "  ----------------- $(printf %${WIDTH}s "-------") ---"
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
+  echo "  aws-cli           $(printf %${WIDTH}s $AWS_CLI_VERSION) $AWS_CLI_URL"
 
   if [ `uname` = 'Linux' ] ; then
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
@@ -168,6 +181,8 @@ fi
 for download in "$@" ; do
   if [ "$download" = "ant" ] ; then
     bootstrap ant apache-ant $ANT_URL
+  elif [ "$download" = "aws-cli" ] ; then
+    bootstrap_aws_cli
   elif [ "$download" = "docker-compose" ] ; then
     bootstrap_docker_util docker-compose $DOCKER_COMPOSE_URL
   elif [ "$download" = "docker-machine" ] ; then
