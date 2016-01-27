@@ -22,7 +22,7 @@ EC2_API_TOOLS_URL=$AMAZON_MIRROR_URL/ec2-downloads/ec2-api-tools.zip
 EMR_CLI_VERSION="(latest)"
 EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 
-GO_VERSION=1.5.2
+GO_VERSION=1.5.3
 GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 LIQUIBASE_VERSION=3.2.3
