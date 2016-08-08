@@ -28,7 +28,7 @@ GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 LIQUIBASE_VERSION=3.2.3
 LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-$LIQUIBASE_VERSION/liquibase-$LIQUIBASE_VERSION-bin.zip
 
-MAVEN_VERSION=3.2.5
+MAVEN_VERSION=3.3.9
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
 MYSQL_JAR_VERSION=5.1.35
