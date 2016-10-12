@@ -25,6 +25,9 @@ EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
 GO_VERSION=1.6
 GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
+JMETER_VERSION=3.0
+JMETER_URL=http://www-us.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
+
 LIQUIBASE_VERSION=3.2.3
 LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-$LIQUIBASE_VERSION/liquibase-$LIQUIBASE_VERSION-bin.zip
 
@@ -161,6 +164,7 @@ function usage() {
 
   echo "  emr-cli           $(printf %${WIDTH}s $EMR_CLI_VERSION) $EMR_CLI_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
+  echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  liquibase         $(printf %${WIDTH}s $LIQUIBASE_VERSION) $LIQUIBASE_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
@@ -193,6 +197,8 @@ for download in "$@" ; do
     bootstrap_emr_cli
   elif [ "$download" = "go" ] ; then
     bootstrap "" go $GO_URL
+  elif [ "$download" = "jmeter" ] ; then
+    bootstrap jmeter apache-jmeter- $JMETER_URL
   elif [ "$download" = "liquibase" ] ; then
     bootstrap_liquibase
   elif [ "$download" = "maven" ] ; then
