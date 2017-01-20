@@ -10,7 +10,7 @@ ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
-DOCKER_COMPOSE_VERSION=1.9.0
+DOCKER_COMPOSE_VERSION=1.10.0
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
 
 DOCKER_MACHINE_VERSION=0.8.2
