@@ -2,7 +2,7 @@
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=http://mirrors.sonic.net/apache
+APACHE_MIRROR_URL=https://archive.apache.org/dist
 
 ANT_VERSION=1.9.7
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
@@ -16,44 +16,17 @@ DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_C
 DOCKER_MACHINE_VERSION=0.8.2
 DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
 
-EC2_API_TOOLS_VERSION="(latest)"
-EC2_API_TOOLS_URL=$AMAZON_MIRROR_URL/ec2-downloads/ec2-api-tools.zip
-
-EMR_CLI_VERSION="(latest)"
-EMR_CLI_URL=$AMAZON_MIRROR_URL/elasticmapreduce/elastic-mapreduce-ruby.zip
-
 GO_VERSION=1.7.5
 GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JMETER_VERSION=3.0
-JMETER_URL=http://www-us.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
-
-LIQUIBASE_VERSION=3.2.3
-LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-$LIQUIBASE_VERSION/liquibase-$LIQUIBASE_VERSION-bin.zip
+JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
 MAVEN_VERSION=3.3.9
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
-MYSQL_JAR_VERSION=5.1.35
-MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
-
-NODEJS_VERSION=4.5.0
-NODEJS_URL=https://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-${LOWER_UNAME}-x64.tar.gz
-
-PLAY_VERSION=2.2.3
-PLAY_URL=http://downloads.typesafe.com/play/$PLAY_VERSION/play-$PLAY_VERSION.zip
-
-RDS_CLI_VERSION="(latest)"
-RDS_CLI_URL=$AMAZON_MIRROR_URL/rds-downloads/RDSCli.zip
-
 RUST_VERSION="(latest)"
 RUST_URL=https://static.rust-lang.org/rustup.sh
-
-SBT_VERSION=0.13.8
-SBT_URL=https://dl.bintray.com/sbt/native-packages/sbt/$SBT_VERSION/sbt-$SBT_VERSION.tgz
-
-SCALA_VERSION=2.10.3
-SCALA_URL=http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz
 
 function untar_download() {
   /usr/bin/curl -L -s $1 | tar xz
@@ -118,26 +91,6 @@ function bootstrap_docker_util() {
   chmod +x $1
 }
 
-function bootstrap_emr_cli() {
-  rm -rf emr-cli
-  mkdir emr-cli
-  cd emr-cli
-
-  unzip_download $EMR_CLI_URL
-
-  cd ..
-}
-
-function bootstrap_liquibase() {
-  rm -rf liquibase
-  mkdir liquibase
-  cd liquibase
-
-  unzip_download $LIQUIBASE_URL
-  chmod +x liquibase
-  cd ..
-}
-
 function bootstrap_rust() {
   RUSTUP_ARGS="--prefix=`pwd`/rust --yes --disable-sudo"
   download $RUST_URL
@@ -162,18 +115,10 @@ function usage() {
   echo "  docker-machine    $(printf %${WIDTH}s $DOCKER_MACHINE_VERSION) $DOCKER_MACHINE_URL"
   fi
 
-  echo "  emr-cli           $(printf %${WIDTH}s $EMR_CLI_VERSION) $EMR_CLI_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
-  echo "  liquibase         $(printf %${WIDTH}s $LIQUIBASE_VERSION) $LIQUIBASE_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
-  echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
-  echo "  nodejs            $(printf %${WIDTH}s $NODEJS_VERSION) $NODEJS_URL"
-  echo "  play              $(printf %${WIDTH}s $PLAY_VERSION) $PLAY_URL"
-  echo "  rds-cli           $(printf %${WIDTH}s $RDS_CLI_VERSION) $RDS_CLI_URL"
   echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
-  echo "  sbt               $(printf %${WIDTH}s $SBT_VERSION) $SBT_URL"
-  echo "  scala             $(printf %${WIDTH}s $SCALA_VERSION) $SCALA_URL"
 
   exit 1
 }
@@ -191,32 +136,14 @@ for download in "$@" ; do
     bootstrap_docker_util docker-compose $DOCKER_COMPOSE_URL
   elif [ "$download" = "docker-machine" ] ; then
     bootstrap_docker_util docker-machine $DOCKER_MACHINE_URL
-  elif [ "$download" = "ec2-api-tools" ] ; then
-    bootstrap ec2-api-tools ec2-api-tools- $EC2_API_TOOLS_URL
-  elif [ "$download" = "emr-cli" ] ; then
-    bootstrap_emr_cli
   elif [ "$download" = "go" ] ; then
     bootstrap "" go $GO_URL
   elif [ "$download" = "jmeter" ] ; then
     bootstrap jmeter apache-jmeter- $JMETER_URL
-  elif [ "$download" = "liquibase" ] ; then
-    bootstrap_liquibase
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
-  elif [ "$download" = "mysql-jar" ] ; then
-    bootstrap "" "" $MYSQL_JAR_URL
-  elif [ "$download" = "nodejs" ] ; then
-    bootstrap "node" "node-" $NODEJS_URL
-  elif [ "$download" = "play" ] ; then
-    bootstrap play play $PLAY_URL
-  elif [ "$download" = "rds-cli" ] ; then
-    bootstrap rds-cli RDSCli- $RDS_CLI_URL
   elif [ "$download" = "rust" ] ; then
     bootstrap_rust
-  elif [ "$download" = "scala" ] ; then
-    bootstrap scala scala $SCALA_URL
-  elif [ "$download" = "sbt" ] ; then
-    bootstrap "" sbt $SBT_URL
   else
     usage
   fi
