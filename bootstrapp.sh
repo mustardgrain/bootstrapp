@@ -25,6 +25,9 @@ JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 MAVEN_VERSION=3.3.9
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
+MYSQL_JAR_VERSION=5.1.35
+MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
+
 RUST_VERSION="(latest)"
 RUST_URL=https://static.rust-lang.org/rustup.sh
 
@@ -118,6 +121,7 @@ function usage() {
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
+  echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
   echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
 
   exit 1
@@ -142,6 +146,8 @@ for download in "$@" ; do
     bootstrap jmeter apache-jmeter- $JMETER_URL
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
+  elif [ "$download" = "mysql-jar" ] ; then
+    bootstrap "" "" $MYSQL_JAR_URL
   elif [ "$download" = "rust" ] ; then
     bootstrap_rust
   else
