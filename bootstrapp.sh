@@ -10,6 +10,9 @@ ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
+CASSANDRA_VERSION=3.10
+CASSANDRA_URL=https://archive.apache.org/dist/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
+
 DOCKER_COMPOSE_VERSION=1.11.2
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
 
@@ -22,11 +25,17 @@ GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 JMETER_VERSION=3.1
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
+KAFKA_VERSION=0.10.2.1
+KAFKA_URL=http://archive.apache.org/dist/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
+
 MAVEN_VERSION=3.3.9
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
 MYSQL_JAR_VERSION=5.1.35
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
+
+NVM_VERSION=0.33.2
+NVM_URL=https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh
 
 RUST_VERSION="(latest)"
 RUST_URL=https://static.rust-lang.org/rustup.sh
@@ -94,6 +103,10 @@ function bootstrap_docker_util() {
   chmod +x $1
 }
 
+function bootstrap_nvm() {
+  curl -o- $NVM_URL | bash
+}
+
 function bootstrap_rust() {
   RUSTUP_ARGS="--prefix=`pwd`/rust --yes --disable-sudo"
   download $RUST_URL
@@ -112,6 +125,7 @@ function usage() {
   echo "  ----------------- $(printf %${WIDTH}s "-------") ---"
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
   echo "  aws-cli           $(printf %${WIDTH}s $AWS_CLI_VERSION) $AWS_CLI_URL"
+  echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
 
   if [ `uname` = 'Linux' ] ; then
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
@@ -120,8 +134,10 @@ function usage() {
 
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
+  echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
+  echo "  nvm               $(printf %${WIDTH}s $NVM_VERSION) $NVM_URL"
   echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
 
   exit 1
@@ -136,6 +152,8 @@ for download in "$@" ; do
     bootstrap ant apache-ant $ANT_URL
   elif [ "$download" = "aws-cli" ] ; then
     bootstrap_aws_cli
+  elif [ "$download" = "cassandra" ] ; then
+    bootstrap "" apache-cassandra $CASSANDRA_URL
   elif [ "$download" = "docker-compose" ] ; then
     bootstrap_docker_util docker-compose $DOCKER_COMPOSE_URL
   elif [ "$download" = "docker-machine" ] ; then
@@ -144,10 +162,14 @@ for download in "$@" ; do
     bootstrap "" go $GO_URL
   elif [ "$download" = "jmeter" ] ; then
     bootstrap jmeter apache-jmeter- $JMETER_URL
+  elif [ "$download" = "kafka" ] ; then
+    bootstrap "" kafka_ $KAFKA_URL
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
   elif [ "$download" = "mysql-jar" ] ; then
     bootstrap "" "" $MYSQL_JAR_URL
+  elif [ "$download" = "nvm" ] ; then
+    bootstrap_nvm
   elif [ "$download" = "rust" ] ; then
     bootstrap_rust
   else
