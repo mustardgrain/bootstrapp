@@ -10,7 +10,7 @@ ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
-CASSANDRA_VERSION=3.10
+CASSANDRA_VERSION=3.11.0
 CASSANDRA_URL=https://archive.apache.org/dist/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
 
 DOCKER_COMPOSE_VERSION=1.11.2
@@ -25,7 +25,7 @@ GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 JMETER_VERSION=3.1
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
-KAFKA_VERSION=0.10.2.1
+KAFKA_VERSION=0.11.0.0
 KAFKA_URL=http://archive.apache.org/dist/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
 
 MAVEN_VERSION=3.3.9
