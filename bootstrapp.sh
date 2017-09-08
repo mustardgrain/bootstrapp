@@ -37,6 +37,9 @@ MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_
 NVM_VERSION=0.33.2
 NVM_URL=https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh
 
+OP_VERSION=0.1.1
+OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
+
 RUST_VERSION="(latest)"
 RUST_URL=https://static.rust-lang.org/rustup.sh
 
@@ -107,6 +110,10 @@ function bootstrap_nvm() {
   curl -o- $NVM_URL | bash
 }
 
+function bootstrap_op() {
+  unzip_download $OP_URL
+}
+
 function bootstrap_rust() {
   RUSTUP_ARGS="--prefix=`pwd`/rust --yes --disable-sudo"
   download $RUST_URL
@@ -138,6 +145,7 @@ function usage() {
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
   echo "  nvm               $(printf %${WIDTH}s $NVM_VERSION) $NVM_URL"
+  echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
   echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
 
   exit 1
@@ -170,6 +178,8 @@ for download in "$@" ; do
     bootstrap "" "" $MYSQL_JAR_URL
   elif [ "$download" = "nvm" ] ; then
     bootstrap_nvm
+  elif [ "$download" = "op" ] ; then
+    bootstrap_op
   elif [ "$download" = "rust" ] ; then
     bootstrap_rust
   else
