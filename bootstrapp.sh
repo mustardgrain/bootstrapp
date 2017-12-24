@@ -10,35 +10,39 @@ ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
-CASSANDRA_VERSION=3.11.0
-CASSANDRA_URL=https://archive.apache.org/dist/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
+CASSANDRA_VERSION=3.11.1
+CASSANDRA_URL=$APACHE_MIRROR_URL/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
 
-DOCKER_COMPOSE_VERSION=1.11.2
+DOCKER_COMPOSE_VERSION=1.18.0
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
 
 DOCKER_MACHINE_VERSION=0.10.0
 DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
 
 GO_VERSION=1.9.2
-GO_URL=http://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
+GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JMETER_VERSION=3.1
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
-KAFKA_VERSION=0.11.0.0
-KAFKA_URL=http://archive.apache.org/dist/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
+KAFKA_VERSION=1.0.0
+KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
 
-MAVEN_VERSION=3.3.9
+MAVEN_VERSION=3.5.2
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
-MYSQL_JAR_VERSION=5.1.35
+MYSQL_JAR_VERSION=5.1.45
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
-NVM_VERSION=0.33.2
+NVM_VERSION=0.33.8
 NVM_URL=https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh
 
 OP_VERSION=0.1.1
 OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
+
+RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo 'linux'`
+RCLONE_VERSION=1.39
+RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
 RUST_VERSION="(latest)"
 RUST_URL=https://static.rust-lang.org/rustup.sh
@@ -114,6 +118,14 @@ function bootstrap_op() {
   unzip_download $OP_URL
 }
 
+function bootstrap_rclone() {
+  unzip_download $RCLONE_URL
+  zip_name=`basename $RCLONE_URL`
+  dir_name=${zip_name:0:${#zip_name}-4}
+  mv $dir_name/rclone .
+  rm -rf $dir_name
+}
+
 function bootstrap_rust() {
   RUSTUP_ARGS="--prefix=`pwd`/rust --yes --disable-sudo"
   download $RUST_URL
@@ -129,7 +141,7 @@ function usage() {
   echo "$0 <bootstrapp option> [<bootstrapp option>...]"
   echo ""
   echo "  Bootstrapp option $(printf %${WIDTH}s "Version") URL"
-  echo "  ----------------- $(printf %${WIDTH}s "-------") ---"
+  echo "  ----------------- $(printf %${WIDTH}s "--------") ---"
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
   echo "  aws-cli           $(printf %${WIDTH}s $AWS_CLI_VERSION) $AWS_CLI_URL"
   echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
@@ -146,6 +158,7 @@ function usage() {
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
   echo "  nvm               $(printf %${WIDTH}s $NVM_VERSION) $NVM_URL"
   echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
+  echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
   echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
 
   exit 1
@@ -180,6 +193,8 @@ for download in "$@" ; do
     bootstrap_nvm
   elif [ "$download" = "op" ] ; then
     bootstrap_op
+  elif [ "$download" = "rclone" ] ; then
+    bootstrap_rclone
   elif [ "$download" = "rust" ] ; then
     bootstrap_rust
   else
