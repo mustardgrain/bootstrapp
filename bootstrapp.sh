@@ -34,18 +34,15 @@ MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-
 MYSQL_JAR_VERSION=5.1.45
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
-NVM_VERSION=0.33.8
-NVM_URL=https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh
-
-OP_VERSION=0.1.1
+OP_VERSION=0.2.1
 OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
 
-RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo 'linux'`
+RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
 RCLONE_VERSION=1.39
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
-RUST_VERSION="(latest)"
-RUST_URL=https://static.rust-lang.org/rustup.sh
+TERRAFORM_VERSION=0.11.3
+TERRAFORM_URL=https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${LOWER_UNAME}_amd64.zip
 
 function untar_download() {
   /usr/bin/curl -L -s $1 | tar xz
@@ -110,10 +107,6 @@ function bootstrap_docker_util() {
   chmod +x $1
 }
 
-function bootstrap_nvm() {
-  curl -o- $NVM_URL | bash
-}
-
 function bootstrap_op() {
   unzip_download $OP_URL
 }
@@ -126,14 +119,8 @@ function bootstrap_rclone() {
   rm -rf $dir_name
 }
 
-function bootstrap_rust() {
-  RUSTUP_ARGS="--prefix=`pwd`/rust --yes --disable-sudo"
-  download $RUST_URL
-
-  sh rustup.sh $RUSTUP_ARGS --uninstall
-  rm -rf rust
-  sh rustup.sh $RUSTUP_ARGS
-  rm -f rustup.sh
+function bootstrap_terraform() {
+  unzip_download $TERRAFORM_URL
 }
 
 function usage() {
@@ -156,10 +143,9 @@ function usage() {
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
-  echo "  nvm               $(printf %${WIDTH}s $NVM_VERSION) $NVM_URL"
   echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
-  echo "  rust              $(printf %${WIDTH}s $RUST_VERSION) $RUST_URL"
+  echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
 
   exit 1
 }
@@ -189,14 +175,12 @@ for download in "$@" ; do
     bootstrap maven apache-maven $MAVEN_URL
   elif [ "$download" = "mysql-jar" ] ; then
     bootstrap "" "" $MYSQL_JAR_URL
-  elif [ "$download" = "nvm" ] ; then
-    bootstrap_nvm
   elif [ "$download" = "op" ] ; then
     bootstrap_op
   elif [ "$download" = "rclone" ] ; then
     bootstrap_rclone
-  elif [ "$download" = "rust" ] ; then
-    bootstrap_rust
+  elif [ "$download" = "terraform" ] ; then
+    bootstrap_terraform
   else
     usage
   fi
