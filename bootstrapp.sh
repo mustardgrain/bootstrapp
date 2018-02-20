@@ -44,6 +44,9 @@ RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclo
 TERRAFORM_VERSION=0.11.3
 TERRAFORM_URL=https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${LOWER_UNAME}_amd64.zip
 
+ZOOKEEPER_VERSION=3.4.9
+ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
+
 function untar_download() {
   /usr/bin/curl -L -s $1 | tar xz
 }
@@ -146,6 +149,7 @@ function usage() {
   # echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
   # echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
+  echo "  zookeeper         $(printf %${WIDTH}s $ZOOKEEPER_VERSION) $ZOOKEEPER_URL"
 
   exit 1
 }
@@ -181,6 +185,8 @@ for download in "$@" ; do
     bootstrap_rclone
   elif [ "$download" = "terraform" ] ; then
     bootstrap_terraform
+  elif [ "$download" = "zookeeper" ] ; then
+    bootstrap "" zookeeper- $ZOOKEEPER_URL
   else
     usage
   fi
