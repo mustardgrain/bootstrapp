@@ -2,7 +2,7 @@
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=http://mirrors.ocf.berkeley.edu/apache
+APACHE_MIRROR_URL=$AMAZON_MIRROR_URL/mustard-grain/apache
 
 ANT_VERSION=1.10.2
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
@@ -22,7 +22,7 @@ DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_
 GO_VERSION=1.10
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
-JMETER_VERSION=3.1
+JMETER_VERSION=4.0
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
 KAFKA_VERSION=1.0.0
@@ -142,10 +142,10 @@ function usage() {
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
-  echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
-  echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
+  # echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
+  # echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
-  echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
+  # echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
 
   exit 1
 }
