@@ -2,15 +2,15 @@
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=https://archive.apache.org/dist
+APACHE_MIRROR_URL=http://mirrors.ocf.berkeley.edu/apache
 
-ANT_VERSION=1.10.1
+ANT_VERSION=1.10.2
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
-CASSANDRA_VERSION=3.11.1
+CASSANDRA_VERSION=3.11.2
 CASSANDRA_URL=$APACHE_MIRROR_URL/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
 
 DOCKER_COMPOSE_VERSION=1.18.0
@@ -19,7 +19,7 @@ DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_C
 DOCKER_MACHINE_VERSION=0.10.0
 DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
 
-GO_VERSION=1.9.2
+GO_VERSION=1.10
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JMETER_VERSION=3.1
