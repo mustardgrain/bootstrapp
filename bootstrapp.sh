@@ -19,7 +19,7 @@ DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_C
 DOCKER_MACHINE_VERSION=0.10.0
 DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
 
-GO_VERSION=1.10.2
+GO_VERSION=1.11.1
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JMETER_VERSION=4.0
