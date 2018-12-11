@@ -2,49 +2,58 @@
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=$AMAZON_MIRROR_URL/mustard-grain/apache
+APACHE_MIRROR_URL=http://archive.apache.org/dist
 
-ANT_VERSION=1.10.2
+ANT_VERSION=1.10.5
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
-CASSANDRA_VERSION=3.11.2
+CASSANDRA_VERSION=3.11.3
 CASSANDRA_URL=$APACHE_MIRROR_URL/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
 
-DOCKER_COMPOSE_VERSION=1.18.0
+COCKROACH_VERSION=2.1.2
+COCKROACH_OS=$LOWER_UNAME
+
+if [ "$COCKROACH_OS" = "darwin" ] ; then
+  COCKROACH_OS=$COCKROACH_OS-10.9
+fi
+
+COCKROACH_URL=https://binaries.cockroachdb.com/cockroach-v${COCKROACH_VERSION}.${COCKROACH_OS}-amd64.tgz
+
+DOCKER_COMPOSE_VERSION=1.23.2
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
 
-DOCKER_MACHINE_VERSION=0.10.0
+DOCKER_MACHINE_VERSION=0.16.0
 DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
 
-GO_VERSION=1.11.1
+GO_VERSION=1.11.2
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
-JMETER_VERSION=4.0
+JMETER_VERSION=5.0
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
-KAFKA_VERSION=1.1.0
+KAFKA_VERSION=2.1.0
 KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
 
-MAVEN_VERSION=3.5.2
+MAVEN_VERSION=3.6.0
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
-MYSQL_JAR_VERSION=5.1.45
+MYSQL_JAR_VERSION=5.1.47
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
-OP_VERSION=0.2.1
+OP_VERSION=0.5.4
 OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
 
 RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
-RCLONE_VERSION=1.39
+RCLONE_VERSION=1.45
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
-TERRAFORM_VERSION=0.11.3
+TERRAFORM_VERSION=0.11.10
 TERRAFORM_URL=https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${LOWER_UNAME}_amd64.zip
 
-ZOOKEEPER_VERSION=3.4.9
+ZOOKEEPER_VERSION=3.4.13
 ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
 
 function untar_download() {
@@ -135,6 +144,7 @@ function usage() {
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
   echo "  aws-cli           $(printf %${WIDTH}s $AWS_CLI_VERSION) $AWS_CLI_URL"
   echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
+  echo "  cockroach         $(printf %${WIDTH}s $COCKROACH_VERSION) $COCKROACH_URL"
 
   if [ `uname` = 'Linux' ] ; then
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
@@ -145,10 +155,10 @@ function usage() {
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
-  # echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
-  # echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
+  echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
+  echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
-  # echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
+  echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
   echo "  zookeeper         $(printf %${WIDTH}s $ZOOKEEPER_VERSION) $ZOOKEEPER_URL"
 
   exit 1
@@ -165,6 +175,8 @@ for download in "$@" ; do
     bootstrap_aws_cli
   elif [ "$download" = "cassandra" ] ; then
     bootstrap "" apache-cassandra $CASSANDRA_URL
+  elif [ "$download" = "cockroach" ] ; then
+    bootstrap "" cockroach $COCKROACH_URL
   elif [ "$download" = "docker-compose" ] ; then
     bootstrap_docker_util docker-compose $DOCKER_COMPOSE_URL
   elif [ "$download" = "docker-machine" ] ; then
