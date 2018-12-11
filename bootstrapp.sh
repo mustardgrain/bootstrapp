@@ -145,12 +145,8 @@ function usage() {
   echo "  aws-cli           $(printf %${WIDTH}s $AWS_CLI_VERSION) $AWS_CLI_URL"
   echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
   echo "  cockroach         $(printf %${WIDTH}s $COCKROACH_VERSION) $COCKROACH_URL"
-
-  if [ `uname` = 'Linux' ] ; then
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
   echo "  docker-machine    $(printf %${WIDTH}s $DOCKER_MACHINE_VERSION) $DOCKER_MACHINE_URL"
-  fi
-
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
