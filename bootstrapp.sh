@@ -31,6 +31,20 @@ DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_
 GO_VERSION=1.11.2
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
+JAVA_OS=$LOWER_UNAME
+
+if [ "$JAVA_OS" = "darwin" ] ; then
+  JAVA_OS=mac
+fi
+
+JAVA_MAIN_VERSION=8
+JAVA_MINOR_VERSION=202
+JAVA_BUILD=08
+JAVA_VERSION=${JAVA_MAIN_VERSION}u${JAVA_MINOR_VERSION}-b${JAVA_BUILD}
+JAVA_FILE_NAME_VERSION=`echo $JAVA_VERSION | sed s/-//g`
+JAVA_FILE_NAME=OpenJDK${JAVA_MAIN_VERSION}U-jdk_x64_${JAVA_OS}_hotspot_${JAVA_FILE_NAME_VERSION}.tar.gz
+JAVA_URL=https://github.com/AdoptOpenJDK/openjdk${JAVA_MAIN_VERSION}-binaries/releases/download/jdk${JAVA_VERSION}/$JAVA_FILE_NAME
+
 JMETER_VERSION=5.0
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
@@ -148,6 +162,7 @@ function usage() {
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
   echo "  docker-machine    $(printf %${WIDTH}s $DOCKER_MACHINE_VERSION) $DOCKER_MACHINE_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
+  echo "  java              $(printf %${WIDTH}s $JAVA_VERSION) $JAVA_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
@@ -179,6 +194,8 @@ for download in "$@" ; do
     bootstrap_docker_util docker-machine $DOCKER_MACHINE_URL
   elif [ "$download" = "go" ] ; then
     bootstrap "" go $GO_URL
+  elif [ "$download" = "java" ] ; then
+    bootstrap java jdk${JAVA_VERSION} $JAVA_URL
   elif [ "$download" = "jmeter" ] ; then
     bootstrap jmeter apache-jmeter- $JMETER_URL
   elif [ "$download" = "kafka" ] ; then
