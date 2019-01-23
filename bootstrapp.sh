@@ -2,7 +2,7 @@
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=http://archive.apache.org/dist
+APACHE_MIRROR_URL=https://archive.apache.org/dist
 
 ANT_VERSION=1.10.5
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
