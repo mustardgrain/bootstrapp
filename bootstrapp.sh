@@ -57,7 +57,7 @@ MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-
 MYSQL_JAR_VERSION=5.1.47
 MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
 
-OP_VERSION=0.5.4
+OP_VERSION=0.5.5
 OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
 
 RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
