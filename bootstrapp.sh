@@ -4,7 +4,7 @@ LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
 APACHE_MIRROR_URL=https://archive.apache.org/dist
 
-ANT_VERSION=1.10.5
+ANT_VERSION=1.10.6
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 AWS_CLI_VERSION=latest
@@ -22,13 +22,13 @@ fi
 
 COCKROACH_URL=https://binaries.cockroachdb.com/cockroach-v${COCKROACH_VERSION}.${COCKROACH_OS}-amd64.tgz
 
-DOCKER_COMPOSE_VERSION=1.23.2
+DOCKER_COMPOSE_VERSION=1.24.1
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
 
 DOCKER_MACHINE_VERSION=0.16.0
 DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
 
-GO_VERSION=1.12
+GO_VERSION=1.12.9
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JAVA_OS=$LOWER_UNAME
@@ -38,8 +38,8 @@ if [ "$JAVA_OS" = "darwin" ] ; then
 fi
 
 JAVA_MAIN_VERSION=8
-JAVA_MINOR_VERSION=202
-JAVA_BUILD=08
+JAVA_MINOR_VERSION=222
+JAVA_BUILD=10
 JAVA_VERSION=${JAVA_MAIN_VERSION}u${JAVA_MINOR_VERSION}-b${JAVA_BUILD}
 JAVA_FILE_NAME_VERSION=`echo $JAVA_VERSION | sed s/-//g`
 JAVA_FILE_NAME=OpenJDK${JAVA_MAIN_VERSION}U-jdk_x64_${JAVA_OS}_hotspot_${JAVA_FILE_NAME_VERSION}.tar.gz
@@ -51,7 +51,7 @@ JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 KAFKA_VERSION=2.1.0
 KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
 
-MAVEN_VERSION=3.6.0
+MAVEN_VERSION=3.6.1
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
 MYSQL_JAR_VERSION=5.1.47
