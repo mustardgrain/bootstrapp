@@ -64,7 +64,7 @@ RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
 RCLONE_VERSION=1.45
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
-TERRAFORM_VERSION=0.11.10
+TERRAFORM_VERSION=0.12.7
 TERRAFORM_URL=https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${LOWER_UNAME}_amd64.zip
 
 ZOOKEEPER_VERSION=3.4.13
