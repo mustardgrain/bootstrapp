@@ -60,6 +60,9 @@ MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_
 OP_VERSION=0.5.5
 OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
 
+PWGEN_VERSION=1.0.1
+PWGEN_URL=https://github.com/kirktrue/pwgen/releases/download/v${PWGEN_VERSION}/pwgen-v${PWGEN_VERSION}-${LOWER_UNAME}-amd64
+
 RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
 RCLONE_VERSION=1.45
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
@@ -137,6 +140,12 @@ function bootstrap_op() {
   unzip_download $OP_URL
 }
 
+function bootstrap_pwgen() {
+  download $PWGEN_URL
+  mv `basename $PWGEN_URL` pwgen
+  chmod +x pwgen
+}
+
 function bootstrap_rclone() {
   unzip_download $RCLONE_URL
   zip_name=`basename $RCLONE_URL`
@@ -168,6 +177,7 @@ function usage() {
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
   echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
   echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
+  echo "  pwgen             $(printf %${WIDTH}s $PWGEN_VERSION) $PWGEN_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
   echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
   echo "  zookeeper         $(printf %${WIDTH}s $ZOOKEEPER_VERSION) $ZOOKEEPER_URL"
@@ -206,6 +216,8 @@ for download in "$@" ; do
     bootstrap "" "" $MYSQL_JAR_URL
   elif [ "$download" = "op" ] ; then
     bootstrap_op
+  elif [ "$download" = "pwgen" ] ; then
+    bootstrap_pwgen
   elif [ "$download" = "rclone" ] ; then
     bootstrap_rclone
   elif [ "$download" = "terraform" ] ; then
