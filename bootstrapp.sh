@@ -2,18 +2,18 @@
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=https://archive.apache.org/dist
+APACHE_MIRROR_URL=https://mirrors.sonic.net/apache
 
-ANT_VERSION=1.10.6
+ANT_VERSION=1.10.7
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 AWS_CLI_VERSION=latest
 AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
 
-CASSANDRA_VERSION=3.11.4
+CASSANDRA_VERSION=3.11.6
 CASSANDRA_URL=$APACHE_MIRROR_URL/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
 
-COCKROACH_VERSION=2.1.2
+COCKROACH_VERSION=19.2.5
 COCKROACH_OS=$LOWER_UNAME
 
 if [ "$COCKROACH_OS" = "darwin" ] ; then
@@ -22,13 +22,10 @@ fi
 
 COCKROACH_URL=https://binaries.cockroachdb.com/cockroach-v${COCKROACH_VERSION}.${COCKROACH_OS}-amd64.tgz
 
-DOCKER_COMPOSE_VERSION=1.24.1
+DOCKER_COMPOSE_VERSION=1.25.4
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
 
-DOCKER_MACHINE_VERSION=0.16.0
-DOCKER_MACHINE_URL=https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine-`uname -s`-`uname -m`
-
-GO_VERSION=1.12.9
+GO_VERSION=1.14.1
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JAVA_OS=$LOWER_UNAME
@@ -38,40 +35,34 @@ if [ "$JAVA_OS" = "darwin" ] ; then
 fi
 
 JAVA_MAIN_VERSION=8
-JAVA_MINOR_VERSION=222
-JAVA_BUILD=10
+JAVA_MINOR_VERSION=242
+JAVA_BUILD=08
 JAVA_VERSION=${JAVA_MAIN_VERSION}u${JAVA_MINOR_VERSION}-b${JAVA_BUILD}
 JAVA_FILE_NAME_VERSION=`echo $JAVA_VERSION | sed s/-//g`
 JAVA_FILE_NAME=OpenJDK${JAVA_MAIN_VERSION}U-jdk_x64_${JAVA_OS}_hotspot_${JAVA_FILE_NAME_VERSION}.tar.gz
 JAVA_URL=https://github.com/AdoptOpenJDK/openjdk${JAVA_MAIN_VERSION}-binaries/releases/download/jdk${JAVA_VERSION}/$JAVA_FILE_NAME
 
-JMETER_VERSION=5.0
+JMETER_VERSION=5.2.1
 JMETER_URL=$APACHE_MIRROR_URL/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip
 
-KAFKA_VERSION=2.1.0
-KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.12-$KAFKA_VERSION.tgz
+KAFKA_VERSION=2.4.1
+KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.13-$KAFKA_VERSION.tgz
 
-MAVEN_VERSION=3.6.1
+MAVEN_VERSION=3.6.3
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
-
-MYSQL_JAR_VERSION=5.1.47
-MYSQL_JAR_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/$MYSQL_JAR_VERSION/mysql-connector-java-$MYSQL_JAR_VERSION.jar
-
-OP_VERSION=0.5.5
-OP_URL=https://cache.agilebits.com/dist/1P/op/pkg/v${OP_VERSION}/op_${LOWER_UNAME}_amd64_v${OP_VERSION}.zip
 
 PWGEN_VERSION=1.0.1
 PWGEN_URL=https://github.com/kirktrue/pwgen/releases/download/v${PWGEN_VERSION}/pwgen-v${PWGEN_VERSION}-${LOWER_UNAME}-amd64
 
 RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
-RCLONE_VERSION=1.45
+RCLONE_VERSION=1.51.0
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
-TERRAFORM_VERSION=0.12.7
+TERRAFORM_VERSION=0.12.24
 TERRAFORM_URL=https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${LOWER_UNAME}_amd64.zip
 
-ZOOKEEPER_VERSION=3.4.13
-ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
+ZOOKEEPER_VERSION=3.6.0
+ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz
 
 function untar_download() {
   /usr/bin/curl -L -s $1 | tar xz
@@ -129,15 +120,11 @@ function bootstrap_aws_cli() {
   rm -rf awscli-bundle*
 }
 
-function bootstrap_docker_util() {
-  rm -rf $1
-  download $2
-  mv `basename $2` $1
-  chmod +x $1
-}
-
-function bootstrap_op() {
-  unzip_download $OP_URL
+function bootstrap_docker_compose() {
+  rm -f docker-compose
+  download $DOCKER_COMPOSE_URL
+  mv `basename $DOCKER_COMPOSE_URL` docker-compose
+  chmod +x docker-compose
 }
 
 function bootstrap_pwgen() {
@@ -155,28 +142,26 @@ function bootstrap_rclone() {
 }
 
 function bootstrap_terraform() {
+  rm -f terraform
   unzip_download $TERRAFORM_URL
 }
 
 function usage() {
   WIDTH=20
-  echo "$0 <bootstrapp option> [<bootstrapp option>...]"
+  echo "$0 <binary> [<binary>...]"
   echo ""
-  echo "  Bootstrapp option $(printf %${WIDTH}s "Version") URL"
-  echo "  ----------------- $(printf %${WIDTH}s "--------") ---"
+  echo "  Binary            $(printf %${WIDTH}s "Version") Download URL"
+  echo "  ------            $(printf %${WIDTH}s "-------") ------------"
   echo "  ant               $(printf %${WIDTH}s $ANT_VERSION) $ANT_URL"
   echo "  aws-cli           $(printf %${WIDTH}s $AWS_CLI_VERSION) $AWS_CLI_URL"
   echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
   echo "  cockroach         $(printf %${WIDTH}s $COCKROACH_VERSION) $COCKROACH_URL"
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
-  echo "  docker-machine    $(printf %${WIDTH}s $DOCKER_MACHINE_VERSION) $DOCKER_MACHINE_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  java              $(printf %${WIDTH}s $JAVA_VERSION) $JAVA_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
-  echo "  mysql-jar         $(printf %${WIDTH}s $MYSQL_JAR_VERSION) $MYSQL_JAR_URL"
-  echo "  op                $(printf %${WIDTH}s $OP_VERSION) $OP_URL"
   echo "  pwgen             $(printf %${WIDTH}s $PWGEN_VERSION) $PWGEN_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
   echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
@@ -199,9 +184,7 @@ for download in "$@" ; do
   elif [ "$download" = "cockroach" ] ; then
     bootstrap "" cockroach $COCKROACH_URL
   elif [ "$download" = "docker-compose" ] ; then
-    bootstrap_docker_util docker-compose $DOCKER_COMPOSE_URL
-  elif [ "$download" = "docker-machine" ] ; then
-    bootstrap_docker_util docker-machine $DOCKER_MACHINE_URL
+    bootstrap_docker_compose
   elif [ "$download" = "go" ] ; then
     bootstrap "" go $GO_URL
   elif [ "$download" = "java" ] ; then
@@ -212,10 +195,6 @@ for download in "$@" ; do
     bootstrap "" kafka_ $KAFKA_URL
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
-  elif [ "$download" = "mysql-jar" ] ; then
-    bootstrap "" "" $MYSQL_JAR_URL
-  elif [ "$download" = "op" ] ; then
-    bootstrap_op
   elif [ "$download" = "pwgen" ] ; then
     bootstrap_pwgen
   elif [ "$download" = "rclone" ] ; then
