@@ -51,6 +51,15 @@ KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.13-$KAFKA_VERSION.tgz
 MAVEN_VERSION=3.6.3
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
+NODE_VERSION=13.12.0
+NODE_BINARY_EXTENSION=xz
+
+if [ "$LOWER_UNAME" = "darwin" ] ; then
+  NODE_BINARY_EXTENSION=gz
+fi
+
+NODE_URL=https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-$LOWER_UNAME-x64.tar.$NODE_BINARY_EXTENSION
+
 PWGEN_VERSION=1.0.1
 PWGEN_URL=https://github.com/kirktrue/pwgen/releases/download/v${PWGEN_VERSION}/pwgen-v${PWGEN_VERSION}-${LOWER_UNAME}-amd64
 
@@ -65,14 +74,17 @@ ZOOKEEPER_VERSION=3.6.0
 ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz
 
 function untar_download() {
-  /usr/bin/curl -L -s $1 | tar xz
+  tmp_file=$(mktemp)
+  /usr/bin/curl -L -s $1 > $tmp_file
+  tar xzf $tmp_file
+  rm -f $tmp_file
 }
 
 function unzip_download() {
-  TMP_FILE=/tmp/download.zip
-  /usr/bin/curl -L -s $1 > $TMP_FILE
-  unzip -q $TMP_FILE
-  rm -f $TMP_FILE
+  tmp_file=$(mktemp)
+  /usr/bin/curl -L -s $1 > $tmp_file
+  unzip -q $tmp_file
+  rm -f $tmp_file
 }
 
 function download() {
@@ -100,7 +112,7 @@ function bootstrap() {
 
   if [ "$ARCHIVE_TYPE" = "zip" ] ; then
     unzip_download $URL
-  elif [ "$ARCHIVE_TYPE" = "tgz" -o "$ARCHIVE_TYPE" = ".gz" ] ; then
+  elif [ "$ARCHIVE_TYPE" = "tgz" ] || [ "$ARCHIVE_TYPE" = ".gz" ] || [ "$ARCHIVE_TYPE" = ".xz" ] ; then
     untar_download $URL
   else
     download $URL
@@ -162,6 +174,7 @@ function usage() {
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
   echo "  kafka             $(printf %${WIDTH}s $KAFKA_VERSION) $KAFKA_URL"
   echo "  maven             $(printf %${WIDTH}s $MAVEN_VERSION) $MAVEN_URL"
+  echo "  node              $(printf %${WIDTH}s $NODE_VERSION) $NODE_URL"
   echo "  pwgen             $(printf %${WIDTH}s $PWGEN_VERSION) $PWGEN_URL"
   echo "  rclone            $(printf %${WIDTH}s $RCLONE_VERSION) $RCLONE_URL"
   echo "  terraform         $(printf %${WIDTH}s $TERRAFORM_VERSION) $TERRAFORM_URL"
@@ -195,6 +208,8 @@ for download in "$@" ; do
     bootstrap "" kafka_ $KAFKA_URL
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
+  elif [ "$download" = "node" ] ; then
+    bootstrap node node $NODE_URL
   elif [ "$download" = "pwgen" ] ; then
     bootstrap_pwgen
   elif [ "$download" = "rclone" ] ; then
