@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
@@ -74,21 +74,36 @@ ZOOKEEPER_VERSION=3.6.0
 ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz
 
 function untar_download() {
-  tmp_file=$(mktemp)
-  /usr/bin/curl -L -s $1 > $tmp_file
-  tar xzf $tmp_file
+  tmp_file=$(basename $1)
+  download $1
+
+  archive_extension=${URL:(-3)}
+
+  if [ "$archive_extension" = "tgz" ] || [ "$archive_extension" = ".gz" ] ; then
+    tar_flags=xzf
+  elif [ "$archive_extension" = ".xz" ] ; then
+    tar_flags=xJf
+  else
+    echo "Unknown archive extension $archive_extension"
+    exit 1
+  fi
+
+  tar $tar_flags $tmp_file
   rm -f $tmp_file
 }
 
 function unzip_download() {
-  tmp_file=$(mktemp)
-  /usr/bin/curl -L -s $1 > $tmp_file
+  tmp_file=$(basename $1)
+  download $1
   unzip -q $tmp_file
   rm -f $tmp_file
 }
 
 function download() {
-  /usr/bin/curl -L -s $1 > `basename $1`
+  src_url=$1
+  tmp_file=$(basename $src_url)
+  echo "Downloading $src_url to $tmp_file"
+  /usr/bin/curl -L $src_url > $tmp_file
 }
 
 function bootstrap() {
@@ -98,29 +113,39 @@ function bootstrap() {
   fi
 
   SHORT_NAME=$1
-  LONG_NAME=$2
+  LONG_NAME_PREFIX=$2
   URL=$3
   ARCHIVE_TYPE=${URL:(-3)}
 
   if [ "$SHORT_NAME" != "" ] ; then
-    unlink $SHORT_NAME 2> /dev/null
+    rm -f $SHORT_NAME
   fi
 
-  if [ "$LONG_NAME" != "" ] ; then
-    rm -rf $LONG_NAME*
+  if [ "$LONG_NAME_PREFIX" != "" ] ; then
+    rm -rf $LONG_NAME_PREFIX*
   fi
 
-  if [ "$ARCHIVE_TYPE" = "zip" ] ; then
-    unzip_download $URL
-  elif [ "$ARCHIVE_TYPE" = "tgz" ] || [ "$ARCHIVE_TYPE" = ".gz" ] || [ "$ARCHIVE_TYPE" = ".xz" ] ; then
+  if [ "$ARCHIVE_TYPE" = "tgz" ] || [ "$ARCHIVE_TYPE" = ".gz" ] || [ "$ARCHIVE_TYPE" = ".xz" ] ; then
     untar_download $URL
+  elif [ "$ARCHIVE_TYPE" = "zip" ] ; then
+    unzip_download $URL
   else
     download $URL
   fi
 
-  if [ "$LONG_NAME" != "" -a "$SHORT_NAME" != "" ] ; then
-    ln -s $LONG_NAME* $SHORT_NAME
+  if [ "$LONG_NAME_PREFIX" != "" ] && [ "$SHORT_NAME" != "" ] ; then
+    ln -s $LONG_NAME_PREFIX* $SHORT_NAME
   fi
+}
+
+function bootstrap_mv_chmod() {
+  SHORT_NAME=$1
+  URL=$2
+
+  rm -f $SHORT_NAME
+  download $URL
+  mv `basename $URL` $SHORT_NAME
+  chmod +x $SHORT_NAME
 }
 
 function bootstrap_aws_cli() {
@@ -132,30 +157,12 @@ function bootstrap_aws_cli() {
   rm -rf awscli-bundle*
 }
 
-function bootstrap_docker_compose() {
-  rm -f docker-compose
-  download $DOCKER_COMPOSE_URL
-  mv `basename $DOCKER_COMPOSE_URL` docker-compose
-  chmod +x docker-compose
-}
-
-function bootstrap_pwgen() {
-  download $PWGEN_URL
-  mv `basename $PWGEN_URL` pwgen
-  chmod +x pwgen
-}
-
 function bootstrap_rclone() {
   unzip_download $RCLONE_URL
   zip_name=`basename $RCLONE_URL`
   dir_name=${zip_name:0:${#zip_name}-4}
   mv $dir_name/rclone .
   rm -rf $dir_name
-}
-
-function bootstrap_terraform() {
-  rm -f terraform
-  unzip_download $TERRAFORM_URL
 }
 
 function usage() {
@@ -189,19 +196,19 @@ fi
 
 for download in "$@" ; do
   if [ "$download" = "ant" ] ; then
-    bootstrap ant apache-ant $ANT_URL
+    bootstrap ant apache-ant- $ANT_URL
   elif [ "$download" = "aws-cli" ] ; then
     bootstrap_aws_cli
   elif [ "$download" = "cassandra" ] ; then
-    bootstrap "" apache-cassandra $CASSANDRA_URL
+    bootstrap "" apache-cassandra- $CASSANDRA_URL
   elif [ "$download" = "cockroach" ] ; then
     bootstrap "" cockroach $COCKROACH_URL
   elif [ "$download" = "docker-compose" ] ; then
-    bootstrap_docker_compose
+    bootstrap_mv_chmod docker-compose $DOCKER_COMPOSE_URL
   elif [ "$download" = "go" ] ; then
     bootstrap "" go $GO_URL
   elif [ "$download" = "java" ] ; then
-    bootstrap java jdk${JAVA_VERSION} $JAVA_URL
+    bootstrap java jdk $JAVA_URL
   elif [ "$download" = "jmeter" ] ; then
     bootstrap jmeter apache-jmeter- $JMETER_URL
   elif [ "$download" = "kafka" ] ; then
@@ -209,15 +216,15 @@ for download in "$@" ; do
   elif [ "$download" = "maven" ] ; then
     bootstrap maven apache-maven $MAVEN_URL
   elif [ "$download" = "node" ] ; then
-    bootstrap node node $NODE_URL
+    bootstrap node node- $NODE_URL
   elif [ "$download" = "pwgen" ] ; then
-    bootstrap_pwgen
+    bootstrap_mv_chmod pwgen $PWGEN_URL
   elif [ "$download" = "rclone" ] ; then
     bootstrap_rclone
   elif [ "$download" = "terraform" ] ; then
-    bootstrap_terraform
+    bootstrap "" terraform $TERRAFORM_URL
   elif [ "$download" = "zookeeper" ] ; then
-    bootstrap "" zookeeper- $ZOOKEEPER_URL
+    bootstrap "" apache-zookeeper- $ZOOKEEPER_URL
   else
     usage
   fi
