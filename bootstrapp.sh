@@ -1,6 +1,8 @@
 #!/bin/bash -e
+# shellcheck shell=bash
+# shellcheck disable=SC2001
 
-LOWER_UNAME=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
+LOWER_UNAME=$(uname | tr '[:upper:]' '[:lower:]')
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
 APACHE_MIRROR_URL=https://mirrors.sonic.net/apache
 
@@ -23,7 +25,7 @@ fi
 COCKROACH_URL=https://binaries.cockroachdb.com/cockroach-v${COCKROACH_VERSION}.${COCKROACH_OS}-amd64.tgz
 
 DOCKER_COMPOSE_VERSION=1.25.4
-DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m`
+DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)
 
 GO_VERSION=1.14.1
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
@@ -38,7 +40,7 @@ JAVA_MAIN_VERSION=8
 JAVA_MINOR_VERSION=242
 JAVA_BUILD=08
 JAVA_VERSION=${JAVA_MAIN_VERSION}u${JAVA_MINOR_VERSION}-b${JAVA_BUILD}
-JAVA_FILE_NAME_VERSION=`echo $JAVA_VERSION | sed s/-//g`
+JAVA_FILE_NAME_VERSION=$(echo $JAVA_VERSION | sed s/-//g)
 JAVA_FILE_NAME=OpenJDK${JAVA_MAIN_VERSION}U-jdk_x64_${JAVA_OS}_hotspot_${JAVA_FILE_NAME_VERSION}.tar.gz
 JAVA_URL=https://github.com/AdoptOpenJDK/openjdk${JAVA_MAIN_VERSION}-binaries/releases/download/jdk${JAVA_VERSION}/$JAVA_FILE_NAME
 
@@ -63,7 +65,7 @@ NODE_URL=https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-$LOWER_UNAME
 PWGEN_VERSION=1.0.1
 PWGEN_URL=https://github.com/kirktrue/pwgen/releases/download/v${PWGEN_VERSION}/pwgen-v${PWGEN_VERSION}-${LOWER_UNAME}-amd64
 
-RCLONE_OS=`[[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo $LOWER_UNAME`
+RCLONE_OS=$([[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo "$LOWER_UNAME")
 RCLONE_VERSION=1.51.0
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
@@ -74,8 +76,8 @@ ZOOKEEPER_VERSION=3.6.0
 ZOOKEEPER_URL=$APACHE_MIRROR_URL/zookeeper/zookeeper-$ZOOKEEPER_VERSION/apache-zookeeper-$ZOOKEEPER_VERSION-bin.tar.gz
 
 function untar_download() {
-  tmp_file=$(basename $1)
-  download $1
+  tmp_file=$(basename "$1")
+  download "$1"
 
   archive_extension=${URL:(-3)}
 
@@ -88,22 +90,22 @@ function untar_download() {
     exit 1
   fi
 
-  tar $tar_flags $tmp_file
-  rm -f $tmp_file
+  tar $tar_flags "$tmp_file"
+  rm -f "$tmp_file"
 }
 
 function unzip_download() {
-  tmp_file=$(basename $1)
-  download $1
-  unzip -q $tmp_file
-  rm -f $tmp_file
+  tmp_file=$(basename "$1")
+  download "$1"
+  unzip -q "$tmp_file"
+  rm -f "$tmp_file"
 }
 
 function download() {
   src_url=$1
-  tmp_file=$(basename $src_url)
+  tmp_file=$(basename "$src_url")
   echo "Downloading $src_url to $tmp_file"
-  /usr/bin/curl -L $src_url > $tmp_file
+  /usr/bin/curl -L "$src_url" > "$tmp_file"
 }
 
 function bootstrap() {
@@ -118,23 +120,24 @@ function bootstrap() {
   ARCHIVE_TYPE=${URL:(-3)}
 
   if [ "$SHORT_NAME" != "" ] ; then
-    rm -f $SHORT_NAME
+    rm -f "$SHORT_NAME"
   fi
 
   if [ "$LONG_NAME_PREFIX" != "" ] ; then
-    rm -rf $LONG_NAME_PREFIX*
+    rm -rf "$LONG_NAME_PREFIX*"
   fi
 
   if [ "$ARCHIVE_TYPE" = "tgz" ] || [ "$ARCHIVE_TYPE" = ".gz" ] || [ "$ARCHIVE_TYPE" = ".xz" ] ; then
-    untar_download $URL
+    untar_download "$URL"
   elif [ "$ARCHIVE_TYPE" = "zip" ] ; then
-    unzip_download $URL
+    unzip_download "$URL"
   else
-    download $URL
+    download "$URL"
   fi
 
   if [ "$LONG_NAME_PREFIX" != "" ] && [ "$SHORT_NAME" != "" ] ; then
-    ln -s $LONG_NAME_PREFIX* $SHORT_NAME
+    # shellcheck disable=2086
+    ln -s $LONG_NAME_PREFIX* "$SHORT_NAME"
   fi
 }
 
@@ -142,27 +145,26 @@ function bootstrap_mv_chmod() {
   SHORT_NAME=$1
   URL=$2
 
-  rm -f $SHORT_NAME
-  download $URL
-  mv `basename $URL` $SHORT_NAME
-  chmod +x $SHORT_NAME
+  rm -f "$SHORT_NAME"
+  download "$URL"
+  mv "$(basename "$URL")" "$SHORT_NAME"
+  chmod +x "$SHORT_NAME"
 }
 
 function bootstrap_aws_cli() {
   rm -rf aws aws-cli awscli-bundle
-  INSTALL_ARGS="--install-dir=`pwd`/aws-cli --bin-location=`pwd`/aws"
-  unzip_download $AWS_CLI_URL
+  unzip_download "$AWS_CLI_URL"
 
-  ./awscli-bundle/install $INSTALL_ARGS
+  ./awscli-bundle/install -i "$(pwd)"/aws-cli -b "$(pwd)"/aws
   rm -rf awscli-bundle*
 }
 
 function bootstrap_rclone() {
-  unzip_download $RCLONE_URL
-  zip_name=`basename $RCLONE_URL`
+  unzip_download "$RCLONE_URL"
+  zip_name=$(basename "$RCLONE_URL")
   dir_name=${zip_name:0:${#zip_name}-4}
-  mv $dir_name/rclone .
-  rm -rf $dir_name
+  mv "$dir_name"/rclone .
+  rm -rf "$dir_name"
 }
 
 function usage() {
@@ -196,35 +198,35 @@ fi
 
 for download in "$@" ; do
   if [ "$download" = "ant" ] ; then
-    bootstrap ant apache-ant- $ANT_URL
+    bootstrap ant apache-ant- "$ANT_URL"
   elif [ "$download" = "aws-cli" ] ; then
     bootstrap_aws_cli
   elif [ "$download" = "cassandra" ] ; then
-    bootstrap "" apache-cassandra- $CASSANDRA_URL
+    bootstrap "" apache-cassandra- "$CASSANDRA_URL"
   elif [ "$download" = "cockroach" ] ; then
-    bootstrap "" cockroach $COCKROACH_URL
+    bootstrap "" cockroach "$COCKROACH_URL"
   elif [ "$download" = "docker-compose" ] ; then
-    bootstrap_mv_chmod docker-compose $DOCKER_COMPOSE_URL
+    bootstrap_mv_chmod docker-compose "$DOCKER_COMPOSE_URL"
   elif [ "$download" = "go" ] ; then
-    bootstrap "" go $GO_URL
+    bootstrap "" go "$GO_URL"
   elif [ "$download" = "java" ] ; then
-    bootstrap java jdk $JAVA_URL
+    bootstrap java jdk "$JAVA_URL"
   elif [ "$download" = "jmeter" ] ; then
-    bootstrap jmeter apache-jmeter- $JMETER_URL
+    bootstrap jmeter apache-jmeter- "$JMETER_URL"
   elif [ "$download" = "kafka" ] ; then
-    bootstrap "" kafka_ $KAFKA_URL
+    bootstrap "" kafka_ "$KAFKA_URL"
   elif [ "$download" = "maven" ] ; then
-    bootstrap maven apache-maven $MAVEN_URL
+    bootstrap maven apache-maven "$MAVEN_URL"
   elif [ "$download" = "node" ] ; then
-    bootstrap node node- $NODE_URL
+    bootstrap node node- "$NODE_URL"
   elif [ "$download" = "pwgen" ] ; then
-    bootstrap_mv_chmod pwgen $PWGEN_URL
+    bootstrap_mv_chmod pwgen "$PWGEN_URL"
   elif [ "$download" = "rclone" ] ; then
     bootstrap_rclone
   elif [ "$download" = "terraform" ] ; then
-    bootstrap "" terraform $TERRAFORM_URL
+    bootstrap "" terraform "$TERRAFORM_URL"
   elif [ "$download" = "zookeeper" ] ; then
-    bootstrap "" apache-zookeeper- $ZOOKEEPER_URL
+    bootstrap "" apache-zookeeper- "$ZOOKEEPER_URL"
   else
     usage
   fi
