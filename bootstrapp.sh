@@ -66,7 +66,7 @@ PWGEN_VERSION=1.0.1
 PWGEN_URL=https://github.com/kirktrue/pwgen/releases/download/v${PWGEN_VERSION}/pwgen-v${PWGEN_VERSION}-${LOWER_UNAME}-amd64
 
 RCLONE_OS=$([[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo "$LOWER_UNAME")
-RCLONE_VERSION=1.51.0
+RCLONE_VERSION=1.52.2
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
 TERRAFORM_VERSION=0.12.24
