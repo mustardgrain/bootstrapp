@@ -4,9 +4,9 @@
 
 LOWER_UNAME=$(uname | tr '[:upper:]' '[:lower:]')
 AMAZON_MIRROR_URL=https://s3.amazonaws.com
-APACHE_MIRROR_URL=https://mirrors.sonic.net/apache
+APACHE_MIRROR_URL=https://archive.apache.org/dist
 
-ANT_VERSION=1.10.7
+ANT_VERSION=1.10.9
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 AWS_CLI_VERSION=latest
@@ -27,7 +27,7 @@ COCKROACH_URL=https://binaries.cockroachdb.com/cockroach-v${COCKROACH_VERSION}.$
 DOCKER_COMPOSE_VERSION=1.25.4
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)
 
-GO_VERSION=1.14.1
+GO_VERSION=1.15.2
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
 JAVA_OS=$LOWER_UNAME
@@ -53,7 +53,7 @@ KAFKA_URL=$APACHE_MIRROR_URL/kafka/$KAFKA_VERSION/kafka_2.13-$KAFKA_VERSION.tgz
 MAVEN_VERSION=3.6.3
 MAVEN_URL=$APACHE_MIRROR_URL/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
-NODE_VERSION=13.12.0
+NODE_VERSION=12.18.4
 NODE_BINARY_EXTENSION=xz
 
 if [ "$LOWER_UNAME" = "darwin" ] ; then
@@ -66,7 +66,7 @@ PWGEN_VERSION=1.0.1
 PWGEN_URL=https://github.com/kirktrue/pwgen/releases/download/v${PWGEN_VERSION}/pwgen-v${PWGEN_VERSION}-${LOWER_UNAME}-amd64
 
 RCLONE_OS=$([[ $LOWER_UNAME = 'darwin' ]] && echo 'osx' || echo "$LOWER_UNAME")
-RCLONE_VERSION=1.52.2
+RCLONE_VERSION=1.53.1
 RCLONE_URL=https://github.com/ncw/rclone/releases/download/v$RCLONE_VERSION/rclone-v${RCLONE_VERSION}-${RCLONE_OS}-amd64.zip
 
 TERRAFORM_VERSION=0.13.0
