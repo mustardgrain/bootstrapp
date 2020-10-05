@@ -3,14 +3,13 @@
 # shellcheck disable=SC2001
 
 LOWER_UNAME=$(uname | tr '[:upper:]' '[:lower:]')
-AMAZON_MIRROR_URL=https://s3.amazonaws.com
 APACHE_MIRROR_URL=https://archive.apache.org/dist
 
 ANT_VERSION=1.10.9
 ANT_URL=$APACHE_MIRROR_URL/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
 
 AWS_CLI_VERSION=latest
-AWS_CLI_URL=$AMAZON_MIRROR_URL/aws-cli/awscli-bundle.zip
+AWS_CLI_URL=https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
 
 CASSANDRA_VERSION=3.11.8
 CASSANDRA_URL=$APACHE_MIRROR_URL/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz
