@@ -26,6 +26,9 @@ COCKROACH_URL=https://binaries.cockroachdb.com/cockroach-v${COCKROACH_VERSION}.$
 DOCKER_COMPOSE_VERSION=1.25.4
 DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)
 
+ELASTICSEARCH_VERSION=7.9.2
+ELASTICSEARCH_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}-${LOWER_UNAME}-x86_64.tar.gz
+
 GO_VERSION=1.15.2
 GO_URL=https://golang.org/dl/go${GO_VERSION}.${LOWER_UNAME}-amd64.tar.gz
 
@@ -177,6 +180,7 @@ function usage() {
   echo "  cassandra         $(printf %${WIDTH}s $CASSANDRA_VERSION) $CASSANDRA_URL"
   echo "  cockroach         $(printf %${WIDTH}s $COCKROACH_VERSION) $COCKROACH_URL"
   echo "  docker-compose    $(printf %${WIDTH}s $DOCKER_COMPOSE_VERSION) $DOCKER_COMPOSE_URL"
+  echo "  elasticsearch     $(printf %${WIDTH}s $ELASTICSEARCH_VERSION) $ELASTICSEARCH_URL"
   echo "  go                $(printf %${WIDTH}s $GO_VERSION) $GO_URL"
   echo "  java              $(printf %${WIDTH}s $JAVA_VERSION) $JAVA_URL"
   echo "  jmeter            $(printf %${WIDTH}s $JMETER_VERSION) $JMETER_URL"
@@ -206,6 +210,8 @@ for download in "$@" ; do
     bootstrap "" cockroach "$COCKROACH_URL"
   elif [ "$download" = "docker-compose" ] ; then
     bootstrap_mv_chmod docker-compose "$DOCKER_COMPOSE_URL"
+  elif [ "$download" = "elasticsearch" ] ; then
+    bootstrap "" elasticsearch "$ELASTICSEARCH_URL"
   elif [ "$download" = "go" ] ; then
     bootstrap "" go "$GO_URL"
   elif [ "$download" = "java" ] ; then
